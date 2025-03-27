@@ -1,0 +1,1 @@
+Hello! This repository showcases my experience with Programming in Python. Some projects include data analysis of CDC COVID-19 Data, group assignments, and homework assignments from my Python courses.
