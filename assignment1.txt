@@ -1,0 +1,115 @@
+"""
+Name: Emily Espinosa
+Assignment: Employee Class and Validation
+Description: Employee class with attributes, input validation, and display.
+"""
+
+from enum import Enum
+
+class Shift(Enum):
+    DAY = 1
+    SWING = 2
+    NIGHT = 3
+
+class EmpNumError(Exception):
+    pass
+
+class Employee:
+    def __init__(self, name='unidentified', number=999, pay_rate=0.00, shift=Shift.DAY):
+        self._name = name
+        self._number = 999
+        self.set_number(number)
+        self._pay_rate = pay_rate
+        self._shift = shift
+        self._benefits = False
+        self.determine_benefits()
+
+    def determine_benefits(self):
+        self._benefits = self._number < 500
+
+    def get_name(self): return self._name
+    def get_number(self): return self._number
+    def get_pay_rate(self): return self._pay_rate
+    def get_shift(self): return self._shift
+    def has_benefits(self): return self._benefits
+
+    def set_name(self, name): self._name = name
+
+    def set_number(self, number):
+        if 100 <= number <= 999:
+            self._number = number
+        else:
+            self._number = 999
+        self.determine_benefits()
+
+    def set_pay_rate(self, pay_rate): self._pay_rate = pay_rate
+    def set_shift(self, shift): self._shift = shift
+
+    def to_string(self):
+        benefits_str = 'Benefits' if self._benefits else 'No benefits'
+        return f"{self._name} #{self._number} ({benefits_str})\nShift: {self._shift.name}\nPayRate: ${self._pay_rate:.2f}"
+
+def validate_empnum():
+    while True:
+        try:
+            emp_input = input("Enter employee number (100-999): ")
+            if not emp_input.isdigit():
+                raise ValueError("Input must be a digit.")
+            number = int(emp_input)
+            if not (100 <= number <= 999):
+                raise EmpNumError("Employee number must be between 100 and 999.")
+            return number
+        except ValueError as ve:
+            print("ValueError:", ve)
+        except EmpNumError as ee:
+            print("EmpNumError:", ee)
+
+def main():
+    emp1 = Employee()
+    print(emp1.to_string(), '\n')
+
+    emp2 = Employee("Tom Jones", 374, 14.75, Shift.DAY)
+    print(emp2.to_string(), '\n')
+
+    emp3 = Employee("Jim Smith", 99877, 16.00, Shift.SWING)
+    print(emp3.to_string(), '\n')
+
+    name = input("Enter name: ")
+    number = validate_empnum()
+    pay_rate = float(input("Enter pay rate: "))
+    shift_input = int(input("Enter shift (1 = DAY, 2 = SWING, 3 = NIGHT): "))
+    shift = Shift(shift_input)
+    emp4 = Employee(name, number, pay_rate, shift)
+    print("\nEmployee Entered:")
+    print(emp4.to_string())
+
+if __name__ == "__main__":
+    main()
+    
+Sample Run:
+
+unidentified #999 (No benefits)
+Shift: DAY
+PayRate: $0.00
+
+Tom Jones #374 (Benefits)
+Shift: DAY
+PayRate: $14.75
+
+Jim Smith #999 (No benefits)
+Shift: SWING
+PayRate: $16.00
+
+Enter name: Alice
+Enter employee number (100-999): abc
+ValueError: Input must be a digit.
+Enter employee number (100-999): 50
+EmpNumError: Employee number must be between 100 and 999.
+Enter employee number (100-999): 321
+Enter pay rate: 20
+Enter shift (1 = DAY, 2 = SWING, 3 = NIGHT): 3
+
+Employee Entered:
+Alice #321 (Benefits)
+Shift: NIGHT
+PayRate: $20.00
